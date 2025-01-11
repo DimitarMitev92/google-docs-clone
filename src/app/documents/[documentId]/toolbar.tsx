@@ -12,6 +12,7 @@ import {
 import {
   BoldIcon,
   ChevronDownIcon,
+  HighlighterIcon,
   ItalicIcon,
   ListTodoIcon,
   LucideIcon,
@@ -24,7 +25,7 @@ import {
   Undo2Icon,
 } from "lucide-react";
 import { type Level } from "@tiptap/extension-heading";
-import { type ColorResult, CirclePicker } from "react-color";
+import { type ColorResult, SketchPicker } from "react-color";
 
 interface ToolbarButtonProps {
   onClick?: () => void;
@@ -52,8 +53,31 @@ const TextColorButton = () => {
           ></div>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="p-2.5">
-        <CirclePicker color={value} onChange={onChange} />
+      <DropdownMenuContent className="p-0">
+        <SketchPicker color={value} onChange={onChange} />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+const HighlightButton = () => {
+  const { editor } = useEditorStore();
+
+  const value = editor?.getAttributes("highlight").color || "#FFFFFF";
+
+  const onChange = (color: ColorResult) => {
+    editor?.chain().focus().setHighlight({ color: color.hex }).run();
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm">
+          <HighlighterIcon className="size-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-0">
+        <SketchPicker color={value} onChange={onChange} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -295,7 +319,7 @@ export const Toolbar = () => {
         <ToolbarButton key={item.label} {...item} />
       ))}
       <TextColorButton />
-      {/* TODO: Highlight color */}
+      <HighlightButton />
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       {/* TODO: Link */}
       {/* TODO: Image */}
